@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Order System</title>
+    <style>
+        :root {
+            --primary: #d4af37;
+            --secondary: #8b0000;
+            --dark: #222;
+            --light: #f8f8f8;
+        }
+        
+        body {
+            font-family: 'Playfair Display', serif;
+            background: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+            background-size: cover;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: var(--dark);
+        }
+        
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            width: 100%;
+            max-width: 500px;
+            border: 2px solid var(--primary);
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 20px;
+        }
+        
+        h1 {
+            color: var(--secondary);
+            margin: 0;
+            font-size: 2.5rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+        
+        .subtitle {
+            color: var(--dark);
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        .food-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 3px solid var(--primary);
+            display: none;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box;
+            background-color: rgba(255,255,255,0.8);
+            font-family: 'Playfair Display', serif;
+        }
+        
+        button {
+            background-color: var(--secondary);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            width: 100%;
+            transition: all 0.3s;
+            font-family: 'Playfair Display', serif;
+            font-weight: bold;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        
+        button:hover {
+            background-color: #6b0000;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .order-summary {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: rgba(139, 0, 0, 0.1);
+            border-radius: 10px;
+            display: none;
+            border-left: 4px solid var(--secondary);
+        }
+        
+        .order-summary h3 {
+            color: var(--secondary);
+            margin-top: 0;
+            border-bottom: 1px dashed var(--secondary);
+            padding-bottom: 10px;
+        }
+        
+        #summaryContent {
+            white-space: pre-line;
+            line-height: 1.6;
+        }
+        
+        .food-options {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .food-option {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .food-option:hover {
+            border-color: var(--secondary);
+            transform: translateY(-3px);
+        }
+        
+        .food-option img {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
+            margin-bottom: 5px;
+        }
+        
+        .food-option.active {
+            border: 2px solid var(--secondary);
+            background-color: rgba(139, 0, 0, 0.05);
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Royal Spice</h1>
+            <div class="subtitle">Fine Dining Experience</div>
+        </div>
+        
+        <img id="selectedFoodImage" class="food-image" src="" alt="Selected Food">
+        
+        <div class="food-options">
+            <div class="food-option" data-food="Butter Chicken" data-image="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80">
+                <img src="https://images.unsplash.com/photo-1603894584373-5ac82b2ae398?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Butter Chicken">
+                <div>Butter Chicken Rs-200/plate</div>
+            </div>
+            <div class="food-option" data-food="Biryani" data-image="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80">
+                <img src="https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Biryani">
+                <div>Biryani Rs-350/plate</div>
+            </div>
+            <div class="food-option" data-food="Paneer Tikka" data-image="https://images.unsplash.com/photo-1601050690597-df0568f70950?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80">
+                <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Paneer Tikka">
+                <div>Paneer Tikka Rs-50/pcs</div>
+            </div>
+            <div class="food-option" data-food="Dal Makhani" data-image="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80">
+                <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80" alt="Dal Makhani">
+                <div>Dal Makhani Rs-100</div>
+            </div>
+            <div class="food-option" data-food="Pizza" data-image="img/pizza.jpg">
+                <img src="img/pizza.jpg" alt="Pizza">
+                <div>Pizza Rs-189/pcs</div>
+            </div>
+            <div class="food-option" data-food="Noodles" data-image="img/noodles.jpg">
+                <img src="img/noodles.jpg" alt="noodles">
+                <div>Noodles Rs-99/plate</div>
+            </div>
+            <div class="food-option" data-food="Burger" data-image="img/Burgger.jpg">
+                <img src="img/Burgger.jpg" alt="Burger">
+                <div>Burger Rs-49/pcs</div>
+            </div>
+            <div class="food-option" data-food="Fry Chicken" data-image="img/fry chicken.jpg">
+                <img src="img/fry chicken.jpg" alt="fry chicken">
+                <div>Fry Chicken Rs-199/plate</div>
+            </div>
+            <div class="food-option" data-food="Egg Fry" data-image="img/egg fry.jpg">
+                <img src="img/egg fry.jpg" alt="Egg Fry">
+                <div>Egg Fry Rs-99/plate</div>
+            </div>
+            <div class="food-option" data-food="IceCream Cake" data-image="img/icecream cake.jpg">
+                <img src="img/icecream cake.jpg" alt="icecream cake">
+                <div>IceCream Cake Rs-49/pcs</div>
+            </div>
+            <div class="food-option" data-food="Other" data-image="">
+                <div style="height: 60px; display: flex; align-items: center; justify-content: center;">
+                    <span>Other</span>
+                </div>
+                <div>Custom Order</div>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="foodName">Food Name:</label>
+            <input type="text" id="foodName" placeholder="Enter food name or select above" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="quantity">Quantity:</label>
+            <input type="number" id="quantity" placeholder="How many?" min="1" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="tableNo">Table Number:</label>
+            <input type="number" id="tableNo" placeholder="Your table number" min="1" required>
+        </div>
+        
+        <button id="orderBtn">Place Order</button>
+        
+        <div id="orderSummary" class="order-summary">
+            <h3>Your Order Summary</h3>
+            <p id="summaryContent"></p>
+        </div>
+    </div>
+
+    <script>
+        // Food selection functionality
+        const foodOptions = document.querySelectorAll('.food-option');
+        const foodNameInput = document.getElementById('foodName');
+        const foodImage = document.getElementById('selectedFoodImage');
+        
+        foodOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove active class from all options
+                foodOptions.forEach(opt => opt.classList.remove('active'));
+                
+                // Add active class to clicked option
+                this.classList.add('active');
+                
+                // Set food name and image
+                const food = this.getAttribute('data-food');
+                const image = this.getAttribute('data-image');
+                
+                foodNameInput.value = food;
+                
+                if (image) {
+                    foodImage.src = image;
+                    foodImage.style.display = 'block';
+                } else {
+                    foodImage.style.display = 'none';
+                }
+            });
+        });
+        
+        // Order functionality
+        document.getElementById('orderBtn').addEventListener('click', function() {
+            // Get form values
+            const foodName = document.getElementById('foodName').value;
+            const quantity = document.getElementById('quantity').value;
+            const tableNo = document.getElementById('tableNo').value;
+            
+            // Validate inputs
+            if (!foodName || !quantity || !tableNo) {
+                alert('Please fill all fields');
+                return;
+            }
+            
+            // Get current date and time
+            const now = new Date();
+            const orderDate = now.toLocaleDateString('en-IN');
+            const orderTime = now.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' });
+            
+            // Create order message
+            const message = `🛎️ New Order - Royal Spice 🛎️\n\n🍽️ Food: ${foodName}\n🔢 Quantity: ${quantity}\n🪑 Table: ${tableNo}\n📅 Date: ${orderDate}\n⏰ Time: ${orderTime}\n\nPlease deliver on time. Thanks!`;
+            
+            // Display summary
+            document.getElementById('summaryContent').textContent = message;
+            document.getElementById('orderSummary').style.display = 'block';
+            
+            // Scroll to summary
+            document.getElementById('orderSummary').scrollIntoView({ behavior: 'smooth' });
+            
+            // Encode message for URL
+            const encodedMessage = encodeURIComponent(message);
+            
+            // Phone number to send to
+            const phoneNumber = '7571991816';
+            
+            // Create WhatsApp link
+            const whatsappLink = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            // Create SMS link as fallback
+            const smsLink = `sms:${phoneNumber}?body=${encodedMessage}`;
+            
+            // Try to open WhatsApp first, then fall back to SMS
+            window.open(whatsappLink, '_blank');
+        });
+    </script>
+</body>
+</html>
